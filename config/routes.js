@@ -1,9 +1,10 @@
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
 const bcrypt = require('bcryptjs');
 const db = require('../database/dbConfig.js')
 
-const { authenticate, jwtKey } = require('../auth/authenticate');
+const { authenticate } = require('../auth/authenticate');
 
 module.exports = server => {
   server.post('/api/register', register);
@@ -31,9 +32,10 @@ function login(req, res) {
   db('users').where('username', userInput.username)
   .then(user => {
       //username valid password from client == password from db
-      if(user && bcrypt.compareSync(userInput.password, user[0].password)){
+      if(user.length && bcrypt.compareSync(userInput.password, user[0].password)){
 
-          res.status(200).json({ message: `welcome`, jwtKey});
+
+          res.status(200).json({ message: `welcome`});
       } else {
           res.status(404).json({err: 'invalid username or password'})
       }
